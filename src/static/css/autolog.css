@@ -35,14 +35,17 @@ h1 {
     margin: 10px;
 }
 
+.section {
+    clear: both;
+}
+
 .log_date {
     font-size: x-large;
     color: #333333;
 }
 
 .subtitle {
-    clear: both;
-    text-decoration-style: dashed;
+    text-decoration-style: double;
     font-size: large;
 }
 

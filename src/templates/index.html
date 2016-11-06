@@ -15,10 +15,10 @@ function show_logs(logs) {
         var weekday_str = ["一", "二", "三", "四", "五", "六", "天"][weekday - 1];
 
         var log_div = $('<div class="log weekday-' + weekday + '"></div>');
-        var date_div = $('<div class="log_date">' + date + " 星期" + weekday_str + '</div>')
-        var weather_div = $('<div class="weather"></div>')
-        var news_div = $('<div class="news"> </div>')
-        var log_items_div = $('<div class="log_items"></div>')
+        var date_div = $('<div class="log_date section">' + date + " 星期" + weekday_str + '</div>')
+        var weather_div = $('<div class="weather section"></div>')
+        var news_div = $('<div class="news section"> </div>')
+        var log_items_div = $('<div class="log_items section"></div>')
 
 
         log_div.append(date_div);
@@ -60,8 +60,9 @@ function show_logs(logs) {
                 ul_div.append($('<li></li>').text(log_entry))
             }
             log_items_div.append(ul_div);
-            log_div.append(log_items_div);
         }
+
+        log_div.append(log_items_div);
 
         $('#logs').append(log_div);
     }

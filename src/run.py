@@ -4,6 +4,7 @@ import os
 import time
 import datetime
 import logging
+import threading
 
 LOGGER = logging.getLogger("AutoLogApp")
 
@@ -67,6 +68,20 @@ class AutoLogApp(object):
         app.add_url_rule('/autolog/v1/fetch', methods=['GET'], view_func=self.refresh)
         app.add_url_rule('/', methods=['GET'], view_func=self.index)
 
+    def fetch_loop(self):
+        while True:
+            try:
+                LOGGER.debug("Fetching data")
+                self.bk.fetch()
+                time.sleep(3600)
+            except:
+                LOGGER.exception("Error happened in the fetch thread")
+
+    def start_fetch_thread(self):
+        fetch_thread = threading.Thread(target=self.fetch_loop)
+        fetch_thread.daemon = True
+        fetch_thread.start()
+
 # environment variables in use
 ENV_KEY_BAIDU_TOKEN     = 'BAIDU_TOKEN'
 ENV_KEY_DATA_DIR        = 'DATA_DIR'
@@ -78,7 +93,7 @@ ENV_KEY_TITLE           = 'TITLE'
 ENV_KEY_POST_MAGIC      = 'POST_MAGIC'
 
 def main():
-    baidu_token = os.getenv(ENV_KEY_BAIDU_TOKEN, '')
+    baidu_token = os.getenv(ENV_KEY_BAIDU_TOKEN, '1ef059103bc02c7f1cd9b35e5bcab3ab')
     data_dir = os.getenv(ENV_KEY_DATA_DIR,
                          os.path.join(os.path.abspath(os.curdir),
                                       'autolog_data'))
@@ -87,7 +102,7 @@ def main():
     debug = os.getenv(ENV_KEY_DEBUG, None)
     port = os.getenv(ENV_KEY_PORT, "80")
     title = os.getenv(ENV_KEY_TITLE, "Autolog")
-    post_magic = os.getenv(ENV_KEY_POST_MAGIC, "autolog-magic")
+    post_magic = os.getenv(ENV_KEY_POST_MAGIC, "the-very-secret-magic")
 
     if debug:
         level = logging.DEBUG
@@ -98,10 +113,11 @@ def main():
 
     autolog_obj = autolog.AutoLog(baidu_token=baidu_token, data_dir=data_dir, city=city)
     autolog_app = AutoLogApp(autolog_obj, title, post_magic)
+    autolog_app.start_fetch_thread()
 
     app = Flask(__name__)
     autolog_app.setup_flask_app(app)
-    app.run(host='0.0.0.0', port=int(port), debug=debug, threaded=True)
+    app.run(host='0.0.0.0', port=int(port), debug=debug, threaded=True, use_reloader=False)
 
 if __name__ == '__main__':
     main()

@@ -5,19 +5,66 @@
 - 每天自动从[喷嚏图卦](http://www.pentitugua.com/rss.xml)抓取至多20条当天的天下大事
 - 每天从[百度开放平台](http://developer.baidu.com/map/carapi-7.htm)抓取当天的天气情况
 - 以短信息的方式呈现用户状态
-- 每天一个页面
+- 没有数据库，数据存放在文本文件里面，每天一个文件
 
 我希望它能够提供方便打印的格式，以便于用户创建自己的日记书。
 
-RESTful接口
------
+## 怎么运行 ##
+
+第一种方式，是直接运行python程序：
+
+    env TITLE="Trent's world" \
+        DEBUG=1 \
+        BAIDU_TOKEN=1ef059103bc02c7f1cd9b35e5bcab3ab \
+        CITY=南京 \
+        PORT=9999 \
+    python run.py
+
+这需要你的电脑上安装了：
+
+- python-flask
+- python-requests
+- pyton-feedparser
+
+当然你可以用virtualenv来运行。
+
+第二种方式，是使用docker。
+
+制作docker image:
+
+    docker build -t autolog .
+
+随后就可以运行了：
+
+    docker run -d -p 80:80 -v $HOME/autolog_data:/autolog_data \
+               -e TITLE="我的小网站" \
+               -e CITY="南京" \
+               autolog
+
+这个docker容器会把数据存放在`/autolog_data`目录下。
+
+程序的参数是通过环境变量指定的：
+
+| 变量名称 | 解释                       | 默认值 |
+|-----|----------------------------|----------|
+| BAIDU_TOKEN | 百度API token，用于向百度查询天气数据 | 1ef059103bc02c7f1cd9b35e5bcab3ab |
+| DATA_DIR | 数据存放路径。仅适用于方法1 | ./autolog_data |
+| TZ | 时区。| 系统当前时区 |
+| CITY | 城市名称，用于向百度查询天气 | 南京 |
+| DEBUG | 调试模式。设置后会显示更多日志 | "" |
+| PORT | 监听端口，仅适用于方法1 | 80 |
+| TITLE | 网站标题 | Autolog |
+| POST_MAGIC | 发帖的校验码，用于发帖 | the-very-secret-magic |
+| HTTP_PROXY | 代理设置，用于访问百度和喷嚏图卦 |  "" |
+
+## RESTful接口 ##
 
 | 方法  | 路径             | 解释                          |
 |------|------------------|------------------------------|
 | GET  | /autolog/v1/info | 获取日志的概况                  |
 | GET  | /autolog/v1/logs/{date} | 获取某一天的日志         |
 | GET  | /autolog/v1/logs?oldest={oldest_date}&newest={newest_date} | 获取某一时间段的日志 |
-| POST | /autolog/v1/logs?token={token} | 发布一条消息 |
+| POST | /autolog/v1/logs | 发布一条消息 |
 
 ### 获取日志概况 ###
 
@@ -116,21 +163,24 @@ RESTful接口
 
 例子:
 
-    POST http://{ip}:{port}/autolog/v1/logs?token=the_super_magic_token_only_author_knows
+    POST http://{ip}:{port}/autolog/v1/logs
 
     201 Created
 
     {
-        "result": "success"
+        "result": "success",
+        "post_magic": "the-very-secret-magic"
     }
+
+我偷懒没有搞http basic authentication，也没有搞session。用了很土的认证方法。
 
 ## 网页显示 ##
 
-应该用一个单页的小程序就可以搞定了。
+浏览器访问 http://{ip}:{port}/ ，你会看到一个小网页。网页是一个非常简单的单页程序。
+这个网页会呈现出已经存在的信息。
 
-## Environment variables ##
+## 版权信息 ##
 
-- BAIDU_TOKEN
-- DATA_DIR
-- TZ
-- CITY
+本程序作者是 周叶铨 trent.zhou@qq.com
+
+以MIT许可证发布。
