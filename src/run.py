@@ -98,10 +98,10 @@ def main():
                          os.path.join(os.path.abspath(os.curdir),
                                       'autolog_data'))
     tz = os.getenv(ENV_KEY_TZ, time.tzname[1])
-    city = os.getenv(ENV_KEY_CITY, "Nanjing")
+    city = os.getenv(ENV_KEY_CITY, "Nanjing").decode('utf-8')
     debug = os.getenv(ENV_KEY_DEBUG, None)
     port = os.getenv(ENV_KEY_PORT, "80")
-    title = os.getenv(ENV_KEY_TITLE, "Autolog")
+    title = os.getenv(ENV_KEY_TITLE, "Autolog").decode('utf-8')
     post_magic = os.getenv(ENV_KEY_POST_MAGIC, "the-very-secret-magic")
 
     if debug:
