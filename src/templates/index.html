@@ -1,0 +1,81 @@
+{% extends "boilerplate.html" %}
+
+{% block content %}
+<h1>{{title}}</h1>
+
+<div id="logs">
+</div>
+
+<script language="javascript">
+function show_logs(logs) {
+    for (var i in logs) {
+        var log = logs[i];
+        var date = log['date'];
+        var weekday = log['weekday']
+        var weekday_str = ["一", "二", "三", "四", "五", "六", "天"][weekday - 1];
+
+        var log_div = $('<div class="log weekday-' + weekday + '"></div>');
+        var date_div = $('<div class="log_date">' + date + " 星期" + weekday_str + '</div>')
+        var weather_div = $('<div class="weather"></div>')
+        var news_div = $('<div class="news"> </div>')
+        var log_items_div = $('<div class="log_items"></div>')
+
+
+        log_div.append(date_div);
+        // append weather
+        if (log['weather']) {
+            var weather_summary_div = $('<div class="weather_summary"></div>');
+            weather_summary_div.append('<div class="weather_city">' + log["weather"]["city"] + "</div>");
+            weather_summary_div.append('<div class="weather_condition">' + log["weather"]["condition"] + "</div>");
+            weather_div.append(weather_summary_div);
+
+            var weather_detail_div = $('<div class="weather_detail"></div>');
+            weather_detail_div.append('<div class="weather_wind">' + log["weather"]["wind"] + "</div>");
+            weather_detail_div.append('<div class="weather_pm25">空气质量指数：' + log["weather"]["pm25"] + "</div>");
+            weather_detail_div.append('<div class="weather_temperature">气温：' + log["weather"]["temperature"] + "</div>");
+            weather_div.append(weather_detail_div);
+            log_div.append(weather_div);
+        }
+
+        // append all news
+        if (log['news']) {
+            news_title_div = $('<div class="subtitle"></div>');
+            news_title_div.append('<a href="' + log['news']['link'] + '" target="_blank"> 来自喷嚏图卦的新闻 </a>');
+            news_div.append(news_title_div);
+
+            var ul_div = $('<ul class="news_list"></ul>');
+            for (var j in log['news']['titles']) {
+                var news_entry = log['news']['titles'][j]
+                ul_div.append($('<li></li>').text(news_entry));
+            }
+            news_div.append(ul_div);
+            log_div.append(news_div);
+        }
+        // append log items
+        if (log['logs'] && log['logs'].length > 0) {
+            log_div.append('<div class="subtitle">我的记录</div>');
+            var ul_div = $('<ul class="logs_list"></ul>')
+            for (var j in log['logs']) {
+                var log_entry = log['logs'][j];
+                ul_div.append($('<li></li>').text(log_entry))
+            }
+            log_items_div.append(ul_div);
+            log_div.append(log_items_div);
+        }
+
+        $('#logs').append(log_div);
+    }
+}
+
+function load_logs() {
+    $.get('/autolog/v1/logs', type='GET').done(function(data) {
+        show_logs(data["logs"])
+    });
+}
+
+$(document).ready(function() {
+    load_logs();
+});
+
+</script>
+{% endblock %}

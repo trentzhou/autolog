@@ -1,0 +1,95 @@
+/*
+ * Colors for different weekdays
+ */
+.weekday-1 {
+    background-color: #FFDDDD;
+}
+.weekday-2 {
+    background-color: #FFEDDD;
+}
+.weekday-3 {
+    background-color: #FFFEDD;
+}
+.weekday-4 {
+    background-color: #DDFFDE;
+}
+.weekday-5 {
+    background-color: #DDEDFF;
+}
+.weekday-6 {
+    background-color: #FCDDFF;
+}
+.weekday-7 {
+    background-color: #F0F0F0;
+}
+
+h1 {
+    text-align: center;
+}
+
+/*
+ * layout of containers
+ */
+.log {
+    border-style: dotted;
+    margin: 10px;
+}
+
+.log_date {
+    font-size: x-large;
+    color: #333333;
+}
+
+.subtitle {
+    clear: both;
+    text-decoration-style: dashed;
+    font-size: large;
+}
+
+.weather {
+    position: static;
+}
+
+.weather_summary {
+    float: left;
+    width: 50%;
+}
+
+.weather_city {
+    font-size: large;
+}
+
+.weather_condition {
+    color: #ff9300;
+    font-size: large;
+}
+
+.weather_detail {
+    float: right;
+    width: 50%;
+}
+
+.news {
+    position: static;
+}
+
+.log_items {
+    position: static;
+}
+
+ul {
+    list-style: none;
+    padding:20px;
+    margin:0;
+    color: #333333;
+}
+
+li {
+    padding-left: 1em;
+    text-indent: -.7em;
+}
+
+li:before {
+    content: "• ";
+    color: red; /* or whatever color you prefer */
+}
