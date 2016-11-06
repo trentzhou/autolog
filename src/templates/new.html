@@ -1,0 +1,24 @@
+{% extends "boilerplate.html" %}
+{% block content %}
+
+<form>
+    Post magic: <br/> <input type="text" id="post_magic" /> <br/>
+    Message:<br/> <textarea cols="50" id="msg"></textarea> <br/>
+
+    <button onclick="submit_post()">New post</button>
+</form>
+
+<script>
+function submit_post() {
+    var magic = $('#post_magic').val();
+    var msg = $('#msg').val();
+    var data = {
+        'post_magic': magic,
+        'msg': msg
+    };
+    $.post('/autolog/v1/logs', JSON.stringify(data), function () {
+        window.location = '/';
+    });
+}
+</script>
+{% endblock %}

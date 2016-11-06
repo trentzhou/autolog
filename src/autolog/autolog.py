@@ -20,6 +20,7 @@ class AutoLog(object):
         return {
             "date": date.isoformat(),
             "weekday": date.isoweekday(), # sunday=7, monday=1
+            "weekday_text": u"星期" + [u"一", u"二", u"三", u"四", u"五", u"六", u"日"][date.isoweekday() - 1],
             "weather": None,
             "news": None,
             "logs": []
@@ -42,9 +43,17 @@ class AutoLog(object):
                 w['wind'] = today_weather['wind']
                 w['temperature'] = today_weather['temperature']
                 w['city'] = weather['results'][0]['currentCity']
-                w['pm25'] = weather['results'][0]['pm25']
+                w['pm25'] = int(weather['results'][0]['pm25'])
                 w['dayPictureUrl'] = today_weather['dayPictureUrl']
                 w['nightPictureUrl'] = today_weather['nightPictureUrl']
+
+                if w['pm25'] > 100:
+                    pm25_color = 'red'
+                elif w['pm25'] > 50:
+                    pm25_color = 'orange'
+                else:
+                    pm25_color = 'green'
+                w['pm25_color'] = pm25_color
                 log['weather'] = w
                 LOGGER.debug(u"Got weather for {0}: {1}: {2}".format(weather['date'],
                                                                     w['condition'],

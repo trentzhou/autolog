@@ -27,6 +27,10 @@ h1 {
     text-align: center;
 }
 
+.copyright {
+    text-align: center;
+}
+
 /*
  * layout of containers
  */
@@ -37,6 +41,7 @@ h1 {
 
 .section {
     clear: both;
+    margin: 10px;
 }
 
 .log_date {
@@ -45,7 +50,7 @@ h1 {
 }
 
 .subtitle {
-    text-decoration-style: double;
+    text-decoration: underline;
     font-size: large;
 }
 

@@ -25,20 +25,24 @@ class AutoLogApp(object):
             return jsonify(log)
         return jsonify({"error": "failed to find log"}), 404
 
+    def get_logs_entries(self, oldest_date_str=None, newest_date_str=None):
+        all_logs = self.bk.list()
+        if not oldest_date_str:
+            oldest_date_str = '1900-01-01'
+        if not newest_date_str:
+            newest_date_str = datetime.date.today().isoformat()
+        oldest_date_str = datetime.datetime.strptime(oldest_date_str, '%Y-%m-%d').date().isoformat()
+        newest_date_str = datetime.datetime.strptime(newest_date_str, '%Y-%m-%d').date().isoformat()
+
+        result = [self.bk.get(x) for x in all_logs if x >= oldest_date_str and x <= newest_date_str]
+        return result
+
     def get_logs(self):
         oldest_date_str = request.args.get('oldest_date', None)
         newest_date_str = request.args.get('newest_date', None)
-        all_logs = self.bk.list()
 
         try:
-            if not oldest_date_str:
-                oldest_date_str = '1900-01-01'
-            if not newest_date_str:
-                newest_date_str = datetime.date.today().isoformat()
-            oldest_date_str = datetime.datetime.strptime(oldest_date_str, '%Y-%m-%d').date().isoformat()
-            newest_date_str = datetime.datetime.strptime(newest_date_str, '%Y-%m-%d').date().isoformat()
-
-            result = [self.bk.get(x) for x in all_logs if x >= oldest_date_str and x <= newest_date_str]
+            result = self.get_logs_entries(oldest_date_str, newest_date_str)
             LOGGER.debug("Result: {0}".format(result))
             return jsonify({"logs": result})
         except:
@@ -58,13 +62,18 @@ class AutoLogApp(object):
         return jsonify({"result": "success"})
 
     def index(self):
-        return render_template("index.html", title=self.title)
+        logs = self.get_logs_entries()
+        return render_template("index.html", title=self.title, logs=logs)
+
+    def new(self):
+        return render_template("new.html", title="new message")
 
     def setup_flask_app(self, app):
         app.add_url_rule('/autolog/v1/info', methods=['GET'], view_func=self.get_info)
         app.add_url_rule('/autolog/v1/logs/<date>', methods=['GET'], view_func=self.get_log_for_date)
         app.add_url_rule('/autolog/v1/logs', methods=['GET'], view_func=self.get_logs)
         app.add_url_rule('/autolog/v1/logs', methods=['POST'], view_func=self.post_log)
+        app.add_url_rule('/new', methods=['GET'], view_func=self.new)
         app.add_url_rule('/autolog/v1/fetch', methods=['GET'], view_func=self.refresh)
         app.add_url_rule('/', methods=['GET'], view_func=self.index)
 
