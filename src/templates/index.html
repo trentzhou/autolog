@@ -15,9 +15,9 @@
 
     <div id="logs">
         {% for log in logs %}
-        <div class="panel panel-default">
-            <div class="panel-heading"><h2>{{log['date']}} {{log['weekday_text']}}</h2></div>
-            <div class="panel-body">
+        <div class="container">
+            <div><h2>{{log['date']}} {{log['weekday_text']}}</h2></div>
+            <div>
                 {% if log['weather'] %}
                 <h3>
                     <span class="label label-primary">{{log['weather']['city']}}</span>
