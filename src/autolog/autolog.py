@@ -48,12 +48,12 @@ class AutoLog(object):
                 w['nightPictureUrl'] = today_weather['nightPictureUrl']
 
                 if w['pm25'] > 100:
-                    pm25_color = 'red'
+                    pm25_level = 'danger'
                 elif w['pm25'] > 50:
-                    pm25_color = 'orange'
+                    pm25_level = 'warning'
                 else:
-                    pm25_color = 'green'
-                w['pm25_color'] = pm25_color
+                    pm25_level = 'success'
+                w['pm25_level'] = pm25_level
                 log['weather'] = w
                 LOGGER.debug(u"Got weather for {0}: {1}: {2}".format(weather['date'],
                                                                     w['condition'],
